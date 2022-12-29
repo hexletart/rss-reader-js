@@ -1,0 +1,23 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "RSS aggregator project",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hexletart/frontend-project-11.git"
+  },
+  "keywords": [
+    "promise",
+    "async"
+  ],
+  "author": "Artem <hexlet_art@mail.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hexletart/frontend-project-11/issues"
+  },
+  "homepage": "https://github.com/hexletart/frontend-project-11#readme"
+}
