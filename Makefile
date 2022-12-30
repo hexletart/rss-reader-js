@@ -1,1 +1,5 @@
-install-deps: npm ci
+install:
+	npm ci
+
+lint:
+	npx eslint .
