@@ -39,7 +39,6 @@ const handleNotification = (elements, notice) => {
 };
 
 export default (elements) => (path, value) => {
-  // if (path === 'formNotifications') console.log(value.notice, '!!!!!!!!');
   switch (path) {
     // case 'form.response': handleResponseData(elements, value);
     //   break;
