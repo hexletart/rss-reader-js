@@ -38,7 +38,7 @@ const validate = (inputValue, disallowedValues) => {
 };
 
 const getAxiosResponse = (url) => axios
-  .get(`https://allorigins.hexlet.app/gt?url=${encodeURIComponent(url)}`)
+  .get(url)
   .then((response) => response.data)
   .catch((err) => { throw err; });
 
