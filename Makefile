@@ -1,5 +1,7 @@
 install:
 	npm ci
+	npm submodule init
+	npm submodule update
 
 lint:
 	npx eslint .
