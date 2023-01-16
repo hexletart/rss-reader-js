@@ -5,33 +5,43 @@ import onChange from 'on-change';
 import _ from 'lodash';
 import axios from 'axios';
 import * as yup from 'yup';
+import i18next from 'i18next';
 import initView from './view';
+import resources from './locales/index';
 
-const notifications = {
+const getNotifications = (wordHandler) => ({
   errors: {
     networkErrors: {
-      notValidRss: () => new Error('The resource does not contain valid RSS'),
-      axiosError: () => new Error('Network error'),
+      notValidRss: () => new Error(wordHandler
+        .t('aggregator.notifications.errors.process.notValidRss')),
+      axiosError: () => new Error(wordHandler
+        .t('aggregator.notifications.errors.process.axiosError')),
     },
     runtimeErrors: {
-      internalError: () => new Error('Internal error'),
+      internalError: () => new Error(wordHandler
+        .t('aggregator.notifications.errors.process.internalError')),
     },
   },
   successes: {
     forms: {
-      rssUpload: () => ({ message: 'RSS uploaded successfully' }),
+      rssUpload: () => ({
+        message: wordHandler.t('aggregator.notifications.successes.rssUpload'),
+      }),
     },
   },
-};
-
-const getSchema = (disallowedValues) => yup.object().shape({
-  link: yup.string()
-    .url('Link must be a valid URL')
-    .notOneOf(disallowedValues, 'RSS already exists'),
 });
 
-const validate = (inputValue, disallowedValues) => {
-  const schema = getSchema(disallowedValues);
+const getSchema = (disallowedValues, wordHandler) => yup.object().shape({
+  link: yup.string()
+    .url(wordHandler.t('aggregator.notifications.errors.validation.url'))
+    .notOneOf(
+      disallowedValues,
+      wordHandler.t('aggregator.notifications.errors.validation.notOneOf'),
+    ),
+});
+
+const validate = (inputValue, disallowedValues, wordHandler) => {
+  const schema = getSchema(disallowedValues, wordHandler);
   return schema.validate(inputValue, { abortEarly: false })
     .then(() => ({}))
     .catch((err) => err);
@@ -60,6 +70,7 @@ const getContentsData = (contents, ordinalFeedsID, ordinalPostsID) => {
 };
 
 export default () => {
+  const defaultLanguage = 'en';
   const rssRegex = /application\/rss\+xml/;
   const formatValidator = new RegExp(rssRegex);
 
@@ -73,6 +84,7 @@ export default () => {
   };
 
   const state = {
+    lng: defaultLanguage,
     form: {
       field: {
         link: '',
@@ -90,6 +102,14 @@ export default () => {
 
   const watchedState = onChange(state, initView(elements));
 
+  const i18nInstance = i18next.createInstance();
+  i18nInstance.init({
+    lng: state.lng,
+    debug: false,
+    resources,
+  });
+
+  const notifications = getNotifications(i18nInstance);
   elements.input.addEventListener('input', (inputEvent) => {
     Promise.resolve()
       .then(() => inputEvent.preventDefault())
@@ -106,7 +126,11 @@ export default () => {
         const { value } = submitEvent.target.elements.url;
         watchedState.form.processState = 'sending';
         watchedState.form.field.link = value.trim();
-        return validate(watchedState.form.field, watchedState.form.mentionedFeedLinks);
+        return validate(
+          watchedState.form.field,
+          watchedState.form.mentionedFeedLinks,
+          i18nInstance,
+        );
       })
       .then((notice) => {
         watchedState.formNotifications = { notice };
