@@ -14,7 +14,7 @@ export default {
         },
         errors: {
           validation: {
-            existingRss: 'RSS уже существует',
+            notOneOf: 'RSS уже существует',
             url: 'Ссылка должна быть валидным URL',
           },
           process: {
