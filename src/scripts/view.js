@@ -12,10 +12,6 @@ const handleProcess = (elements, process) => {
       elements.submit.disabled = true;
       elements.input.disabled = true;
       break;
-    case 'error':
-      elements.submit.disabled = false;
-      elements.input.disabled = false;
-      break;
     case 'sent':
       elements.submit.disabled = false;
       elements.input.disabled = false;
@@ -38,7 +34,21 @@ const handleNotification = (elements, notice) => {
   notification.textContent = notice.message;
 };
 
-export default (elements) => (path, value) => {
+const getWordMapByElements = (words) => ({
+  formSubmit: words.t('aggregator.form.submit'),
+  header: words.t('aggregator.header'),
+  description: words.t('aggregator.description'),
+  hint: words.t('aggregator.hint'),
+  formLabel: words.t('aggregator.form.label'),
+});
+
+const renderBaseView = (elements, wordHandler) => {
+  const wordMap = getWordMapByElements(wordHandler);
+  Object.entries(wordMap)
+    .forEach(([key, value]) => { elements[key].textContent = value; });
+};
+
+export default (elements, wordHandler) => (path, value) => {
   switch (path) {
     // case 'form.response': handleResponseData(elements, value);
     //   break;
@@ -47,6 +57,8 @@ export default (elements) => (path, value) => {
     case 'form.processState': handleProcess(elements, value);
       break;
     case 'formNotifications': handleNotification(elements, value.notice);
+      break;
+    case 'lng': renderBaseView(elements, wordHandler);
       break;
     default:
       break;

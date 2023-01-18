@@ -33,21 +33,26 @@ const getContentsData = (contents, ordinalFeedsID, ordinalPostsID) => {
 };
 
 export default () => {
+  let notifications;
   const defaultLanguage = 'ru';
   const rssRegex = /application\/rss\+xml/;
   const formatValidator = new RegExp(rssRegex);
 
   const elements = {
     form: document.querySelector('.rss-form'),
+    hint: document.querySelector('.agr-example'),
     posts: document.querySelector('.posts'),
     feeds: document.querySelector('.feeds'),
     input: document.getElementById('form-input'),
-    submit: document.querySelector('.rss-submit'),
+    header: document.querySelector('.agr-header'),
+    formLabel: document.querySelector('.rss-form label'),
+    formSubmit: document.querySelector('.rss-submit'),
+    description: document.querySelector('.agr-description'),
     notification: document.querySelector('.feedback'),
   };
 
   const state = {
-    lng: defaultLanguage,
+    lng: '',
     form: {
       field: {
         link: '',
@@ -63,27 +68,33 @@ export default () => {
     formNotifications: {},
   };
 
-  const watchedState = onChange(state, initView(elements));
-
   const i18nInstance = i18next.createInstance();
-  i18nInstance.init({
-    lng: state.lng,
-    debug: false,
-    resources,
-  });
+  const gettingInstance = i18nInstance
+    .init({
+      lng: defaultLanguage,
+      debug: false,
+      resources,
+    });
 
-  const notifications = getNotifications(i18nInstance);
+  const watchedState = onChange(state, initView(elements, i18nInstance));
+
+  const rendering = gettingInstance
+    .then(() => { watchedState.lng = defaultLanguage; })
+    .then(() => { notifications = getNotifications(i18nInstance); })
+    .catch((err) => { throw err; });
+
   elements.input.addEventListener('input', (inputEvent) => {
-    Promise.resolve()
+    rendering
       .then(() => inputEvent.preventDefault())
       .then(() => {
         watchedState.form.processState = 'filling';
         watchedState.form.processError = null;
-      });
+      })
+      .catch((err) => { throw err; });
   });
 
   elements.form.addEventListener('submit', (submitEvent) => {
-    Promise.resolve()
+    rendering
       .then(() => submitEvent.preventDefault())
       .then(() => {
         const { value } = submitEvent.target.elements.url;
@@ -138,7 +149,7 @@ export default () => {
           ? notifications.errors.runtimeErrors.internalError()
           : notifications.errors.networkErrors.axiosError();
         watchedState.form.processError = { notice };
-        watchedState.form.processState = 'error';
+        watchedState.form.processState = 'filling';
         console.log(caughtErr);
       });
   });
