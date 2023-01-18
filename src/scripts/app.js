@@ -4,48 +4,11 @@
 import onChange from 'on-change';
 import _ from 'lodash';
 import axios from 'axios';
-import * as yup from 'yup';
 import i18next from 'i18next';
 import initView from './view';
 import resources from './locales/index';
-
-const getNotifications = (wordHandler) => ({
-  errors: {
-    networkErrors: {
-      notValidRss: () => new Error(wordHandler
-        .t('aggregator.notifications.errors.process.notValidRss')),
-      axiosError: () => new Error(wordHandler
-        .t('aggregator.notifications.errors.process.axiosError')),
-    },
-    runtimeErrors: {
-      internalError: () => new Error(wordHandler
-        .t('aggregator.notifications.errors.process.internalError')),
-    },
-  },
-  successes: {
-    forms: {
-      rssUpload: () => ({
-        message: wordHandler.t('aggregator.notifications.successes.rssUpload'),
-      }),
-    },
-  },
-});
-
-const getSchema = (disallowedValues, wordHandler) => yup.object().shape({
-  link: yup.string()
-    .url(wordHandler.t('aggregator.notifications.errors.validation.url'))
-    .notOneOf(
-      disallowedValues,
-      wordHandler.t('aggregator.notifications.errors.validation.notOneOf'),
-    ),
-});
-
-const validate = (inputValue, disallowedValues, wordHandler) => {
-  const schema = getSchema(disallowedValues, wordHandler);
-  return schema.validate(inputValue, { abortEarly: false })
-    .then(() => ({}))
-    .catch((err) => err);
-};
+import validate from './validation/validate';
+import getNotifications from './notifications';
 
 const getAxiosResponse = (url) => axios
   .get(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`)
@@ -70,7 +33,7 @@ const getContentsData = (contents, ordinalFeedsID, ordinalPostsID) => {
 };
 
 export default () => {
-  const defaultLanguage = 'en';
+  const defaultLanguage = 'ru';
   const rssRegex = /application\/rss\+xml/;
   const formatValidator = new RegExp(rssRegex);
 
@@ -176,7 +139,7 @@ export default () => {
           : notifications.errors.networkErrors.axiosError();
         watchedState.form.processError = { notice };
         watchedState.form.processState = 'error';
-        console.log(`Caught Error => ${caughtErr}`);
+        console.log(caughtErr);
       });
   });
 };
