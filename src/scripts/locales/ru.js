@@ -1,13 +1,13 @@
 export default {
   translation: {
     aggregator: {
-      headerName: 'RSS агрегатор',
+      header: 'RSS агрегатор',
       description: 'Начните читать RSS сегодня! Это легко, это красиво.',
       form: {
-        inputLabel: 'Ссылка RSS',
-        submitLabel: 'Добавить',
+        label: 'Ссылка RSS',
+        submit: 'Добавить',
       },
-      fieldHint: 'Example: https://ru.hexlet.io/lessons.rss',
+      hint: 'Пример: https://ru.hexlet.io/lessons.rss',
       notifications: {
         successes: {
           rssUpload: 'RSS успешно загружен',
