@@ -9,28 +9,12 @@ import initView from './view';
 import resources from './locales/index';
 import validate from './validation/validate';
 import getNotifications from './notifications';
+import parseContentsData from './parser';
 
 const getAxiosResponse = (url) => axios
   .get(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`)
   .then((response) => response.data)
   .catch((err) => { throw err; });
-
-const getContentsData = (contents, ordinalFeedsID, ordinalPostsID) => {
-  const getElTextContent = (el, selectors) => el.querySelector(selectors).textContent;
-  const channelTitle = getElTextContent(contents, 'channel title');
-  const channelDescription = getElTextContent(contents, 'channel description');
-  const feeds = [{ id: ordinalFeedsID + 1, channelTitle, channelDescription }];
-  const posts = [...contents.querySelectorAll('item')].map((item, i) => {
-    const itemTitle = getElTextContent(item, 'title');
-    const itemLink = getElTextContent(item, 'link');
-    const itemDescription = getElTextContent(item, 'description');
-    const id = ordinalPostsID + i;
-    return {
-      id, itemTitle, itemLink, itemDescription,
-    };
-  });
-  return { feeds, posts };
-};
 
 export default () => {
   let notifications;
@@ -115,7 +99,7 @@ export default () => {
               if (contentType && formatValidator.test(contentType)) {
                 const parser = new DOMParser();
                 const parsedContents = parser.parseFromString(axiosResponse.contents, 'application/xml');
-                const responseData = getContentsData(
+                const responseData = parseContentsData(
                   parsedContents,
                   watchedState.form.response.feeds.length,
                   watchedState.form.response.posts.length,
