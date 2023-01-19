@@ -5,15 +5,15 @@
 const handleProcess = (elements, process) => {
   switch (process) {
     case 'filling':
-      elements.submit.disabled = false;
+      elements.formSubmit.disabled = false;
       elements.input.disabled = false;
       break;
     case 'sending':
-      elements.submit.disabled = true;
+      elements.formSubmit.disabled = true;
       elements.input.disabled = true;
       break;
     case 'sent':
-      elements.submit.disabled = false;
+      elements.formSubmit.disabled = false;
       elements.input.disabled = false;
       elements.form.reset();
       elements.form.focus();
