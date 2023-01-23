@@ -1,6 +1,8 @@
-/* eslint-disable no-useless-return */
 /* eslint-disable no-param-reassign */
+
 // import _ from 'lodash';
+
+import handleResponseData from './handlers/handleData/handleResponseData';
 
 const handleProcess = (elements, process) => {
   switch (process) {
@@ -50,8 +52,8 @@ const renderBaseView = (elements, wordHandler) => {
 
 export default (elements, wordHandler) => (path, value) => {
   switch (path) {
-    // case 'form.response': handleResponseData(elements, value);
-    //   break;
+    case 'form.response': handleResponseData(elements, wordHandler, value);
+      break;
     case 'form.processError': handleNotification(elements, value.notice);
       break;
     case 'form.processState': handleProcess(elements, value);
