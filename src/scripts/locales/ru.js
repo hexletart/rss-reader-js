@@ -24,6 +24,15 @@ export default {
           },
         },
       },
+      dataSection: {
+        feedBlock: {
+          header: 'Фиды',
+        },
+        postBlock: {
+          header: 'Посты',
+          submit: 'Просмотр',
+        },
+      },
     },
   },
 };

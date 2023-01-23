@@ -24,6 +24,15 @@ export default {
           },
         },
       },
+      dataSection: {
+        feedBlock: {
+          header: 'Feeds',
+        },
+        postBlock: {
+          header: 'Posts',
+          submit: 'View',
+        },
+      },
     },
   },
 };
