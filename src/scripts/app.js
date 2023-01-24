@@ -116,7 +116,7 @@ export default () => {
                 const success = notifications.successes.forms.rssUpload();
                 watchedState.formNotifications = { notice: success };
               } else {
-                watchedState.form.processState = 'filling';
+                watchedState.form.processState = 'error';
                 const error = notifications.errors.networkErrors.notValidRss();
                 watchedState.formNotifications = { notice: error };
               }
@@ -125,7 +125,7 @@ export default () => {
               throw err;
             });
         }
-        watchedState.form.processState = 'filling';
+        watchedState.form.processState = 'error';
         return undefined;
       })
       .catch((caughtErr) => {
@@ -133,7 +133,7 @@ export default () => {
           ? notifications.errors.runtimeErrors.internalError()
           : notifications.errors.networkErrors.axiosError();
         watchedState.form.processError = { notice };
-        watchedState.form.processState = 'filling';
+        watchedState.form.processState = 'error';
         console.log(caughtErr);
       });
   });

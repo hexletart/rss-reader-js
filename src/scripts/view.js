@@ -10,6 +10,10 @@ const handleProcess = (elements, process) => {
       elements.formSubmit.disabled = false;
       elements.input.disabled = false;
       break;
+    case 'error':
+      elements.formSubmit.disabled = true;
+      elements.input.disabled = false;
+      break;
     case 'sending':
       elements.formSubmit.disabled = true;
       elements.input.disabled = true;
@@ -25,13 +29,17 @@ const handleProcess = (elements, process) => {
   }
 };
 
-const handleNotification = (elements, notice) => {
+const handleNotification = (elements, notificationData) => {
+  if (notificationData === null) return;
+  const { notice } = notificationData;
   const { notification } = elements;
   notification.textContent = '';
   notification.classList.remove('text-danger', 'text-success');
   const getNoticeColor = (el) => ((el instanceof Error)
     ? 'text-danger' : 'text-success');
+  elements.input.classList.remove('is-invalid');
   if (!notice.message) return;
+  elements.input.classList.add('is-invalid');
   notification.classList.add(getNoticeColor(notice));
   notification.textContent = notice.message;
 };
@@ -54,11 +62,11 @@ export default (elements, wordHandler) => (path, value) => {
   switch (path) {
     case 'form.response': handleResponseData(elements, wordHandler, value);
       break;
-    case 'form.processError': handleNotification(elements, value.notice);
+    case 'form.processError': handleNotification(elements, value);
       break;
     case 'form.processState': handleProcess(elements, value);
       break;
-    case 'formNotifications': handleNotification(elements, value.notice);
+    case 'formNotifications': handleNotification(elements, value);
       break;
     case 'lng': renderBaseView(elements, wordHandler);
       break;
