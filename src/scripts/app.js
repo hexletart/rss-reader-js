@@ -31,8 +31,13 @@ export default () => {
     header: document.querySelector('.agr-header'),
     formLabel: document.querySelector('.rss-form label'),
     formSubmit: document.querySelector('.rss-submit'),
+    dataSection: document.getElementById('section-data'),
+    menuSection: document.getElementById('section-menu'),
     description: document.querySelector('.agr-description'),
     notification: document.querySelector('.feedback'),
+    formSubmitContainer: document.querySelector('.rss-submit .spinner-container'),
+    formSubmitDescription: document.querySelector('.rss-submit .button-description'),
+    
   };
 
   const state = {
@@ -133,7 +138,7 @@ export default () => {
           ? notifications.errors.runtimeErrors.internalError()
           : notifications.errors.networkErrors.axiosError();
         watchedState.form.processError = { notice };
-        watchedState.form.processState = 'error';
+        watchedState.form.processState = 'filling';
         console.log(caughtErr);
       });
   });
