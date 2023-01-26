@@ -37,7 +37,6 @@ export default () => {
     notification: document.querySelector('.feedback'),
     formSubmitContainer: document.querySelector('.rss-submit .spinner-container'),
     formSubmitDescription: document.querySelector('.rss-submit .button-description'),
-    
   };
 
   const state = {
