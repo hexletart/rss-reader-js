@@ -62,7 +62,6 @@
   font-size: var(--bs-btn-font-size);
   font-weight: var(--bs-btn-font-weight);
   line-height: var(--bs-btn-line-height);
-  color: var(--bs-warning);
   text-align: center;
   text-decoration: none;
   vertical-align: middle;
@@ -87,4 +86,8 @@
 .spinner-container {
   display: inline-block;
   width: 1.5rem;
+}
+
+.text-custom-main {
+  color: #c9a92b;
 }

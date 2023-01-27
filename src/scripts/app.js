@@ -11,6 +11,12 @@ import validate from './validation/validate';
 import getNotifications from './notifications';
 import parseContentsData from './parser';
 
+// const archiveToState = (link, { feeds, posts }) => {
+//   console.log(link, 'link');
+//   console.log(feeds, 'feeds');
+//   console.log(posts, 'posts');
+// };
+
 const getAxiosResponse = (url) => axios
   .get(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`)
   .then((response) => response.data)
@@ -40,6 +46,12 @@ export default () => {
   };
 
   const state = {
+
+    check: [
+      { test: '' },
+      { test: '' },
+    ],
+
     lng: '',
     form: {
       field: {
@@ -77,6 +89,7 @@ export default () => {
       .then(() => {
         watchedState.form.processState = 'filling';
         watchedState.form.processError = null;
+        console.log(watchedState, '<===|');
       })
       .catch((err) => { throw err; });
   });
@@ -107,8 +120,15 @@ export default () => {
                   parsedContents,
                   watchedState.form.response.feeds.length,
                   watchedState.form.response.posts.length,
-                );
+                ); // collect
+
+                // const mentionedData = archiveToState(
+                //   watchedState.form.field.link,
+                //   responseData,
+                // );
+
                 const { feeds, posts } = watchedState.form.response;
+
                 const mergedResponse = _.mergeWith(
                   responseData,
                   { feeds, posts },
