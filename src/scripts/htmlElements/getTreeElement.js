@@ -16,7 +16,7 @@ export default (header, attachment) => ({
           name: 'h2',
           type: 'tag',
           attributes: {
-            classes: ['card-title', 'h4', 'font-shadow-h2'],
+            classes: ['card-title', 'h4'],
           },
           children: [
             {

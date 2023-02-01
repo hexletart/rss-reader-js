@@ -3,19 +3,24 @@ import getPostListElement from '../htmlElements/getPostListElement';
 import getTreeElement from '../htmlElements/getTreeElement';
 import buildHtml from '../buildHtml';
 
-export default (elements, wordHandler, responseData) => {
-  const { posts: postElement, feeds: feedElement, dataSection } = elements;
-  dataSection.classList.add('mt-custom-1rem', 'shadow-section-main');
-  postElement.textContent = '';
-  feedElement.textContent = '';
-  const headerPostText = wordHandler.t('aggregator.dataSection.postBlock.header');
-  const headerFeedText = wordHandler.t('aggregator.dataSection.feedBlock.header');
-  const submitText = wordHandler.t('aggregator.dataSection.postBlock.submit');
-  const { posts, feeds } = responseData;
-  const postNodes = posts.map((post) => getPostListElement(submitText, post));
+export const renderFeeds = (elements, wordHandler, feeds) => {
+  const { feeds: feedContainer, dataSection } = elements;
+  if (feedContainer.innerHTML === '') {
+    dataSection.classList.add('mt-custom-1rem', 'shadow-section-main');
+  }
+  const feedHeader = wordHandler.t('aggregator.dataSection.feedBlock.header');
   const feedNodes = feeds.map(getFeedListElement);
-  const postTree = getTreeElement(headerPostText, postNodes);
-  const feedTree = getTreeElement(headerFeedText, feedNodes);
-  postElement.appendChild(buildHtml(postTree));
-  feedElement.appendChild(buildHtml(feedTree));
+  const feedTree = getTreeElement(feedHeader, feedNodes);
+  feedContainer.innerHTML = '';
+  feedContainer.appendChild(buildHtml(feedTree));
+};
+
+export const renderPosts = (elements, wordHandler, posts) => {
+  const { posts: postContainer } = elements;
+  const postHeader = wordHandler.t('aggregator.dataSection.postBlock.header');
+  const postSubmit = wordHandler.t('aggregator.dataSection.postBlock.submit');
+  const postNodes = posts.map((post) => getPostListElement(postSubmit, post));
+  const postTree = getTreeElement(postHeader, postNodes);
+  postContainer.innerHTML = '';
+  postContainer.appendChild(buildHtml(postTree));
 };

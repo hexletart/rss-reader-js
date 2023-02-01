@@ -1,15 +1,19 @@
-export default (contents, ordinalFeedsID, ordinalPostsID) => {
+import { uniqueId } from 'lodash';
+
+export default (gotData) => {
+  const parser = new DOMParser();
+  const contents = parser.parseFromString(gotData, 'application/xml');
   const getElTextContent = (el, selectors) => el.querySelector(selectors).textContent;
-  const channelTitle = getElTextContent(contents, 'channel title');
-  const channelDescription = getElTextContent(contents, 'channel description');
-  const feeds = [{ id: ordinalFeedsID + 1, channelTitle, channelDescription }];
-  const posts = [...contents.querySelectorAll('item')].map((item, i) => {
-    const itemTitle = getElTextContent(item, 'title');
-    const itemLink = getElTextContent(item, 'link');
-    const itemDescription = getElTextContent(item, 'description');
-    const id = ordinalPostsID + i;
+  const feedTitle = getElTextContent(contents, 'channel title');
+  const feedDescription = getElTextContent(contents, 'channel description');
+  const feeds = [{ id: uniqueId(), feedTitle, feedDescription }];
+  const posts = [...contents.querySelectorAll('item')].map((post) => {
+    const postTitle = getElTextContent(post, 'title');
+    const postLink = getElTextContent(post, 'link');
+    const postDescription = getElTextContent(post, 'description');
+    const id = uniqueId();
     return {
-      id, itemTitle, itemLink, itemDescription,
+      id, postTitle, postLink, postDescription,
     };
   });
   return { feeds, posts };

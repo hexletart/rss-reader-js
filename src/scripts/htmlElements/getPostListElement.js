@@ -1,6 +1,6 @@
 export default (submitLabel, post, togglePlacement = 'bottom') => {
   const {
-    id, itemTitle, itemLink, itemDescription,
+    id, postTitle, postLink, postDescription,
   } = post;
   return {
     name: 'li',
@@ -14,13 +14,13 @@ export default (submitLabel, post, togglePlacement = 'bottom') => {
         type: 'tag',
         attributes: {
           classes: ['fw-bold'],
-          href: itemLink,
+          href: postLink,
           data: {
             id,
             toggle: 'tooltip',
             placement: togglePlacement,
           },
-          title: itemDescription,
+          title: postDescription,
           target: '_blank',
           rels: ['noopener', 'noreferrer'],
         },
@@ -28,7 +28,7 @@ export default (submitLabel, post, togglePlacement = 'bottom') => {
           {
             name: '',
             type: 'text',
-            content: itemTitle,
+            content: postTitle,
           },
         ],
       },

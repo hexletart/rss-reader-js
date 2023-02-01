@@ -1,6 +1,6 @@
 export default (feed) => {
   const {
-    channelTitle, channelDescription,
+    feedTitle, feedDescription,
   } = feed;
   return {
     name: 'li',
@@ -19,7 +19,7 @@ export default (feed) => {
           {
             name: '',
             type: 'text',
-            content: channelTitle,
+            content: feedTitle,
           },
         ],
       },
@@ -33,7 +33,7 @@ export default (feed) => {
           {
             name: '',
             type: 'text',
-            content: channelDescription,
+            content: feedDescription,
           },
         ],
       },

@@ -11,22 +11,31 @@ import validate from './validation/validate';
 import getNotifications from './notifications';
 import parseContentsData from './parser';
 
-// const archiveToState = (link, { feeds, posts }) => {
-//   console.log(link, 'link');
-//   console.log(feeds, 'feeds');
-//   console.log(posts, 'posts');
-// };
+const isValidResponse = (responseData) => {
+  const { content_type: contentType, http_code: httpCode } = responseData.status;
+  const rssRegex = /application\/rss\+xml/;
+  const formatValidator = new RegExp(rssRegex);
+  return _.inRange(httpCode, 200, 300) && (contentType && formatValidator.test(contentType));
+};
 
 const getAxiosResponse = (url) => axios
-  .get(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`)
+  .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
   .then((response) => response.data)
   .catch((err) => { throw err; });
 
-export default () => {
+const archiveForState = (source, posts) => posts
+  .map((post) => {
+    const { postTitle, id } = post;
+    return {
+      postTitle,
+      source,
+      isUsed: false,
+      id,
+    };
+  });
+
+export default (language = 'en') => {
   let notifications;
-  const defaultLanguage = 'ru';
-  const rssRegex = /application\/rss\+xml/;
-  const formatValidator = new RegExp(rssRegex);
 
   const elements = {
     form: document.querySelector('.rss-form'),
@@ -46,12 +55,6 @@ export default () => {
   };
 
   const state = {
-
-    check: [
-      { test: '' },
-      { test: '' },
-    ],
-
     lng: '',
     form: {
       field: {
@@ -59,27 +62,74 @@ export default () => {
       },
       processState: '',
       processError: null,
-      mentionedFeedLinks: [],
+      formNotifications: {},
+      involvedSources: [],
+      uiState: {
+        hasStarted: false,
+        displayedPosts: [],
+      },
       response: {
         posts: [],
         feeds: [],
       },
     },
-    formNotifications: {},
   };
 
   const i18nInstance = i18next.createInstance();
   const gettingInstance = i18nInstance
     .init({
-      lng: defaultLanguage,
+      lng: language,
       debug: false,
       resources,
     });
 
-  const watchedState = onChange(state, initView(elements, i18nInstance));
+  const getNewPosts = (posts) => {
+    const { displayedPosts } = state.form.uiState;
+    return posts.filter(({ postTitle: responsePostTitle }) => !displayedPosts
+      .some(({ postTitle }) => responsePostTitle === postTitle));
+  };
+
+  const updatePosts = (watchedState) => {
+    const { involvedSources } = state.form;
+    setTimeout(
+      () => {
+        const promises = involvedSources.map((source) => getAxiosResponse(source)
+          .then((responseData) => {
+            if (isValidResponse(responseData)) return responseData.contents;
+            throw notifications.errors.networkErrors.axiosError();
+          })
+          .then((responseContents) => parseContentsData(responseContents))
+          .then(({ posts }) => getNewPosts(posts))
+          .then((posts) => {
+            if (!_.isEmpty(posts)) {
+              const postArchive = archiveForState(source, posts);
+              watchedState.form.uiState.displayedPosts.push(...postArchive);
+              watchedState.form.response.posts.unshift(...posts);
+            }
+          })
+          .catch((err) => { throw err; }));
+        Promise.all(promises)
+          .catch(() => {
+            console.log(notifications.errors.networkErrors.axiosError());
+          });
+        return updatePosts(watchedState);
+      },
+      5000,
+    );
+  };
+
+  const watchedState = onChange(state, (path, value) => {
+    switch (path) {
+      case 'form.uiState.hasStarted':
+        updatePosts(watchedState);
+        break;
+      default: initView(elements, i18nInstance, path, value);
+        break;
+    }
+  });
 
   const rendering = gettingInstance
-    .then(() => { watchedState.lng = defaultLanguage; })
+    .then(() => { watchedState.lng = language; })
     .then(() => { notifications = getNotifications(i18nInstance); })
     .catch((err) => { throw err; });
 
@@ -89,7 +139,6 @@ export default () => {
       .then(() => {
         watchedState.form.processState = 'filling';
         watchedState.form.processError = null;
-        console.log(watchedState, '<===|');
       })
       .catch((err) => { throw err; });
   });
@@ -103,46 +152,33 @@ export default () => {
         watchedState.form.field.link = value.trim();
         return validate(
           watchedState.form.field,
-          watchedState.form.mentionedFeedLinks,
+          watchedState.form.involvedSources,
           i18nInstance,
         );
       })
       .then((notice) => {
-        watchedState.formNotifications = { notice };
-        if (_.isEmpty(watchedState.formNotifications.notice)) {
+        watchedState.form.formNotifications = { notice };
+        if (_.isEmpty(watchedState.form.formNotifications.notice)) {
           return getAxiosResponse(watchedState.form.field.link)
-            .then((axiosResponse) => {
-              const { content_type: contentType } = axiosResponse.status;
-              if (contentType && formatValidator.test(contentType)) {
-                const parser = new DOMParser();
-                const parsedContents = parser.parseFromString(axiosResponse.contents, 'application/xml');
-                const responseData = parseContentsData(
-                  parsedContents,
-                  watchedState.form.response.feeds.length,
-                  watchedState.form.response.posts.length,
-                ); // collect
-
-                // const mentionedData = archiveToState(
-                //   watchedState.form.field.link,
-                //   responseData,
-                // );
-
-                const { feeds, posts } = watchedState.form.response;
-
-                const mergedResponse = _.mergeWith(
-                  responseData,
-                  { feeds, posts },
-                  (src, dest) => dest.concat(src),
-                );
-                watchedState.form.response = { ...mergedResponse };
-                watchedState.form.processState = 'sent';
-                watchedState.form.mentionedFeedLinks.push(watchedState.form.field.link);
+            .then((responseData) => {
+              const { link } = watchedState.form.field;
+              if (isValidResponse(responseData)) {
+                const { contents: gotDataByAxios } = responseData;
+                const parsedResponseData = parseContentsData(gotDataByAxios);
+                const { feeds, posts } = parsedResponseData;
+                const postArchive = archiveForState(link, posts);
                 const success = notifications.successes.forms.rssUpload();
-                watchedState.formNotifications = { notice: success };
+                watchedState.form.response.feeds.unshift(...feeds);
+                watchedState.form.response.posts.unshift(...posts);
+                watchedState.form.involvedSources.push(link);
+                watchedState.form.uiState.displayedPosts.push(...postArchive);
+                watchedState.form.uiState.hasStarted = true;
+                watchedState.form.formNotifications = { notice: success };
+                watchedState.form.processState = 'sent';
               } else {
-                watchedState.form.processState = 'error';
                 const error = notifications.errors.networkErrors.notValidRss();
-                watchedState.formNotifications = { notice: error };
+                watchedState.form.formNotifications = { notice: error };
+                watchedState.form.processState = 'error';
               }
             })
             .catch((err) => {
@@ -156,9 +192,9 @@ export default () => {
         const notice = (caughtErr.name !== 'AxiosError')
           ? notifications.errors.runtimeErrors.internalError()
           : notifications.errors.networkErrors.axiosError();
+        console.log(notice);
         watchedState.form.processError = { notice };
         watchedState.form.processState = 'filling';
-        console.log(caughtErr);
       });
   });
 };

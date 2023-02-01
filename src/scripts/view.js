@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
-
 // import _ from 'lodash';
 
-import handleResponseData from './handlers/handleResponseData';
+import { renderFeeds, renderPosts } from './handlers/handleResponseData';
 import handleSendingAnimation from './handlers/handleSendingAnimation';
 
 const handleProcess = (elements, process) => {
@@ -64,15 +63,17 @@ const renderBaseView = (elements, wordHandler) => {
     .forEach(([key, value]) => { elements[key].textContent = value; });
 };
 
-export default (elements, wordHandler) => (path, value) => {
+export default (elements, wordHandler, path, value) => {
   switch (path) {
-    case 'form.response': handleResponseData(elements, wordHandler, value);
+    case 'form.response.feeds': renderFeeds(elements, wordHandler, value);
+      break;
+    case 'form.response.posts': renderPosts(elements, wordHandler, value);
       break;
     case 'form.processError': handleNotification(elements, value);
       break;
     case 'form.processState': handleProcess(elements, value);
       break;
-    case 'formNotifications': handleNotification(elements, value);
+    case 'form.formNotifications': handleNotification(elements, value);
       break;
     case 'lng': renderBaseView(elements, wordHandler);
       break;
