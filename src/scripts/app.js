@@ -10,6 +10,7 @@ import resources from './locales/index';
 import validate from './validation/validate';
 import getNotifications from './notifications';
 import parseContentsData from './parser';
+import indexSourceData from './indexSourceData';
 
 const isValidResponse = (responseData) => {
   const { content_type: contentType, http_code: httpCode } = responseData.status;
@@ -22,17 +23,6 @@ const getAxiosResponse = (url) => axios
   .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
   .then((response) => response.data)
   .catch((err) => { throw err; });
-
-const archiveForState = (source, posts) => posts
-  .map((post) => {
-    const { postTitle, id } = post;
-    return {
-      postTitle,
-      source,
-      isUsed: false,
-      id,
-    };
-  });
 
 export default (language = 'en') => {
   let notifications;
@@ -52,7 +42,12 @@ export default (language = 'en') => {
     notification: document.querySelector('.feedback'),
     formSubmitContainer: document.querySelector('.rss-submit .spinner-container'),
     formSubmitDescription: document.querySelector('.rss-submit .button-description'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+    modalButtonRead: document.querySelector('.modal-footer a'),
+    modalButtonClose: document.querySelector('.modal-footer button'),
   };
+  console.log(elements);
 
   const state = {
     lng: '',
@@ -84,8 +79,8 @@ export default (language = 'en') => {
     });
 
   const getNewPosts = (posts) => {
-    const { displayedPosts } = state.form.uiState;
-    return posts.filter(({ postTitle: responsePostTitle }) => !displayedPosts
+    const { posts: postsInState } = state.form.response;
+    return posts.filter(({ postTitle: responsePostTitle }) => !postsInState
       .some(({ postTitle }) => responsePostTitle === postTitle));
   };
 
@@ -102,9 +97,7 @@ export default (language = 'en') => {
           .then(({ posts }) => getNewPosts(posts))
           .then((posts) => {
             if (!_.isEmpty(posts)) {
-              const postArchive = archiveForState(source, posts);
-              watchedState.form.uiState.displayedPosts.push(...postArchive);
-              watchedState.form.response.posts.unshift(...posts);
+              watchedState.form.response.posts.unshift(...indexSourceData(posts));
             }
           })
           .catch((err) => { throw err; }));
@@ -164,17 +157,17 @@ export default (language = 'en') => {
               const { link } = watchedState.form.field;
               if (isValidResponse(responseData)) {
                 const { contents: gotDataByAxios } = responseData;
-                const parsedResponseData = parseContentsData(gotDataByAxios);
+                const parsedResponseData = parseContentsData(gotDataByAxios, link);
                 const { feeds, posts } = parsedResponseData;
-                const postArchive = archiveForState(link, posts);
+                const [indexedFeeds, indexedPosts] = [feeds, posts].map(indexSourceData);
                 const success = notifications.successes.forms.rssUpload();
-                watchedState.form.response.feeds.unshift(...feeds);
-                watchedState.form.response.posts.unshift(...posts);
+                watchedState.form.response.feeds.unshift(...indexedFeeds);
+                watchedState.form.response.posts.unshift(...indexedPosts);
                 watchedState.form.involvedSources.push(link);
-                watchedState.form.uiState.displayedPosts.push(...postArchive);
                 watchedState.form.uiState.hasStarted = true;
                 watchedState.form.formNotifications = { notice: success };
                 watchedState.form.processState = 'sent';
+                console.log(watchedState, 'watchedState');
               } else {
                 const error = notifications.errors.networkErrors.notValidRss();
                 watchedState.form.formNotifications = { notice: error };

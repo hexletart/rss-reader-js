@@ -33,6 +33,10 @@ export default {
           submit: 'Просмотр',
         },
       },
+      modalComponent: {
+        btnRead: 'Читать полностью',
+        btnClose: 'Закрыть',
+      },
     },
   },
 };

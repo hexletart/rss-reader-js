@@ -55,6 +55,8 @@ const getWordMapByElements = (words) => ({
   description: words.t('aggregator.description'),
   hint: words.t('aggregator.hint'),
   formLabel: words.t('aggregator.form.label'),
+  modalButtonRead: words.t('aggregator.modalComponent.btnRead'),
+  modalButtonClose: words.t('aggregator.modalComponent.btnClose'),
 });
 
 const renderBaseView = (elements, wordHandler) => {

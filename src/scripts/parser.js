@@ -1,19 +1,17 @@
-import { uniqueId } from 'lodash';
-
-export default (gotData) => {
+export default (gotData, source) => {
   const parser = new DOMParser();
   const contents = parser.parseFromString(gotData, 'application/xml');
   const getElTextContent = (el, selectors) => el.querySelector(selectors).textContent;
   const feedTitle = getElTextContent(contents, 'channel title');
   const feedDescription = getElTextContent(contents, 'channel description');
-  const feeds = [{ id: uniqueId(), feedTitle, feedDescription }];
+  const feeds = [{ feedTitle, feedDescription }];
   const posts = [...contents.querySelectorAll('item')].map((post) => {
     const postTitle = getElTextContent(post, 'title');
     const postLink = getElTextContent(post, 'link');
     const postDescription = getElTextContent(post, 'description');
-    const id = uniqueId();
+    const visited = false;
     return {
-      id, postTitle, postLink, postDescription,
+      postTitle, postLink, postDescription, visited, source,
     };
   });
   return { feeds, posts };

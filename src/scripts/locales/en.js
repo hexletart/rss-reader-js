@@ -33,6 +33,10 @@ export default {
           submit: 'View',
         },
       },
+      modalComponent: {
+        btnRead: 'Read in full',
+        btnClose: 'Close',
+      },
     },
   },
 };
