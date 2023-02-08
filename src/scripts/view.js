@@ -1,85 +1,25 @@
-/* eslint-disable no-param-reassign */
-// import _ from 'lodash';
+import handleProcess from './handlers/handleProcess';
+import handleBaseView from './handlers/handleBaseView';
+import handleVisitedPost from './handlers/handleVisitedPost';
+import handleNotification from './handlers/handleNotification';
+import { handleFeeds, handlePosts } from './handlers/handleResponseData';
 
-import { renderFeeds, renderPosts } from './handlers/handleResponseData';
-import handleSendingAnimation from './handlers/handleSendingAnimation';
-
-const handleProcess = (elements, process) => {
-  switch (process) {
-    case 'filling':
-      handleSendingAnimation(elements, false);
-      elements.formSubmit.disabled = false;
-      elements.input.disabled = false;
-      break;
-    case 'error':
-      handleSendingAnimation(elements, false);
-      elements.formSubmit.disabled = true;
-      elements.input.disabled = false;
-      break;
-    case 'sending':
-      handleSendingAnimation(elements, true);
-      elements.formSubmit.disabled = true;
-      elements.input.disabled = true;
-      break;
-    case 'sent':
-      handleSendingAnimation(elements, false);
-      elements.formSubmit.disabled = false;
-      elements.input.disabled = false;
-      elements.form.reset();
-      elements.form.focus();
-      break;
-    default:
-      throw new Error(`Unknown process - ${process}`);
-  }
-};
-
-const handleNotification = (elements, notificationData) => {
-  if (notificationData === null) return;
-  const { notice } = notificationData;
-  const { notification } = elements;
-  notification.textContent = '';
-  notification.classList.remove('text-danger', 'text-success');
-  elements.input.classList.remove('is-invalid');
-  if (!notice.message) return;
-  if (notice instanceof Error) {
-    elements.input.classList.add('is-invalid');
-    notification.classList.add('text-danger');
-  }
-  notification.classList.add('text-success');
-  notification.textContent = notice.message;
-};
-
-const getWordMapByElements = (words) => ({
-  formSubmitDescription: words.t('aggregator.form.submit'),
-  header: words.t('aggregator.header'),
-  description: words.t('aggregator.description'),
-  hint: words.t('aggregator.hint'),
-  formLabel: words.t('aggregator.form.label'),
-  modalButtonRead: words.t('aggregator.modalComponent.btnRead'),
-  modalButtonClose: words.t('aggregator.modalComponent.btnClose'),
-});
-
-const renderBaseView = (elements, wordHandler) => {
-  const wordMap = getWordMapByElements(wordHandler);
-  Object.entries(wordMap)
-    .forEach(([key, value]) => { elements[key].textContent = value; });
-};
-
-export default (elements, wordHandler, path, value) => {
+export default (watchedState, elements, wordHandler, path, value) => {
+  const regexByVisitedChange = /^form\.response\.posts\.(\d+)$/;
+  if (regexByVisitedChange.test(path)) return handleVisitedPost(elements, value);
   switch (path) {
-    case 'form.response.feeds': renderFeeds(elements, wordHandler, value);
-      break;
-    case 'form.response.posts': renderPosts(elements, wordHandler, value);
-      break;
-    case 'form.processError': handleNotification(elements, value);
+    case 'lng': handleBaseView(elements, wordHandler);
       break;
     case 'form.processState': handleProcess(elements, value);
       break;
-    case 'form.formNotifications': handleNotification(elements, value);
+    case 'form.response.feeds': handleFeeds(elements, wordHandler, value);
       break;
-    case 'lng': renderBaseView(elements, wordHandler);
+    case 'form.response.posts': handlePosts(watchedState, elements, wordHandler, value);
+      break;
+    case 'form.formNotifications': handleNotification(elements, value);
       break;
     default:
       break;
   }
+  return undefined;
 };

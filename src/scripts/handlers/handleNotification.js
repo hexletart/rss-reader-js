@@ -2,7 +2,6 @@ import { ValidationError } from 'yup';
 import RssValidationError from '../classes/rssValidationError';
 
 export default (elements, notificationData) => {
-  if (notificationData === null) return;
   const { notice } = notificationData;
   const { notification, input } = elements;
   notification.textContent = '';

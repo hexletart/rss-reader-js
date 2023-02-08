@@ -1,54 +1,24 @@
+/* eslint-disable func-names */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
 
+// import * as bootstrap from 'bootstrap';
 import onChange from 'on-change';
 import _ from 'lodash';
-import axios from 'axios';
 import i18next from 'i18next';
 import initView from './view';
 import resources from './locales/index';
 import validate from './validation/validate';
-import getNotifications from './notifications';
-import parseContentsData from './parser';
-import indexSourceData from './indexSourceData';
-
-const isValidResponse = (responseData) => {
-  const { content_type: contentType, http_code: httpCode } = responseData.status;
-  const rssRegex = /application\/rss\+xml/;
-  const formatValidator = new RegExp(rssRegex);
-  return _.inRange(httpCode, 200, 300) && (contentType && formatValidator.test(contentType));
-};
-
-const getAxiosResponse = (url) => axios
-  .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
-  .then((response) => response.data)
-  .catch((err) => { throw err; });
+import parseContentsData from './utilities/parser';
+import getNotifications from './utilities/notifications';
+import getAsyncResponse from './utilities/axiosGetter';
+import indexSourceData from './utilities/sourceDataIndexator';
+import isValidResponse from './utilities/responseDataValidator';
+import updatePosts from './utilities/postUpdater';
+import elements from './utilities/elements';
 
 export default (language = 'en') => {
   let notifications;
-
-  const elements = {
-    form: document.querySelector('.rss-form'),
-    hint: document.querySelector('.agr-example'),
-    posts: document.querySelector('.posts'),
-    feeds: document.querySelector('.feeds'),
-    input: document.getElementById('form-input'),
-    header: document.querySelector('.agr-header'),
-    formLabel: document.querySelector('.rss-form label'),
-    formSubmit: document.querySelector('.rss-submit'),
-    dataSection: document.getElementById('section-data'),
-    menuSection: document.getElementById('section-menu'),
-    description: document.querySelector('.agr-description'),
-    notification: document.querySelector('.feedback'),
-    formSubmitContainer: document.querySelector('.rss-submit .spinner-container'),
-    formSubmitDescription: document.querySelector('.rss-submit .button-description'),
-    modalTitle: document.querySelector('.modal-title'),
-    modalBody: document.querySelector('.modal-body'),
-    modalButtonRead: document.querySelector('.modal-footer a'),
-    modalButtonClose: document.querySelector('.modal-footer button'),
-  };
-  console.log(elements);
-
   const state = {
     lng: '',
     form: {
@@ -56,12 +26,10 @@ export default (language = 'en') => {
         link: '',
       },
       processState: '',
-      processError: null,
-      formNotifications: {},
       involvedSources: [],
+      formNotifications: {},
       uiState: {
-        hasStarted: false,
-        displayedPosts: [],
+        gotFirstResponse: false,
       },
       response: {
         posts: [],
@@ -78,45 +46,12 @@ export default (language = 'en') => {
       resources,
     });
 
-  const getNewPosts = (posts) => {
-    const { posts: postsInState } = state.form.response;
-    return posts.filter(({ postTitle: responsePostTitle }) => !postsInState
-      .some(({ postTitle }) => responsePostTitle === postTitle));
-  };
-
-  const updatePosts = (watchedState) => {
-    const { involvedSources } = state.form;
-    setTimeout(
-      () => {
-        const promises = involvedSources.map((source) => getAxiosResponse(source)
-          .then((responseData) => {
-            if (isValidResponse(responseData)) return responseData.contents;
-            throw notifications.errors.networkErrors.axiosError();
-          })
-          .then((responseContents) => parseContentsData(responseContents))
-          .then(({ posts }) => getNewPosts(posts))
-          .then((posts) => {
-            if (!_.isEmpty(posts)) {
-              watchedState.form.response.posts.unshift(...indexSourceData(posts));
-            }
-          })
-          .catch((err) => { throw err; }));
-        Promise.all(promises)
-          .catch(() => {
-            console.log(notifications.errors.networkErrors.axiosError());
-          });
-        return updatePosts(watchedState);
-      },
-      5000,
-    );
-  };
-
-  const watchedState = onChange(state, (path, value) => {
+  const watchedState = onChange(state, function (path, value) {
     switch (path) {
-      case 'form.uiState.hasStarted':
-        updatePosts(watchedState);
+      case 'form.uiState.gotFirstResponse':
+        updatePosts(this, notifications);
         break;
-      default: initView(elements, i18nInstance, path, value);
+      default: initView(this, elements, i18nInstance, path, value);
         break;
     }
   });
@@ -131,7 +66,6 @@ export default (language = 'en') => {
       .then(() => inputEvent.preventDefault())
       .then(() => {
         watchedState.form.processState = 'filling';
-        watchedState.form.processError = null;
       })
       .catch((err) => { throw err; });
   });
@@ -152,7 +86,7 @@ export default (language = 'en') => {
       .then((notice) => {
         watchedState.form.formNotifications = { notice };
         if (_.isEmpty(watchedState.form.formNotifications.notice)) {
-          return getAxiosResponse(watchedState.form.field.link)
+          return getAsyncResponse(watchedState.form.field.link)
             .then((responseData) => {
               const { link } = watchedState.form.field;
               if (isValidResponse(responseData)) {
@@ -164,14 +98,16 @@ export default (language = 'en') => {
                 watchedState.form.response.feeds.unshift(...indexedFeeds);
                 watchedState.form.response.posts.unshift(...indexedPosts);
                 watchedState.form.involvedSources.push(link);
-                watchedState.form.uiState.hasStarted = true;
+                watchedState.form.uiState.gotFirstResponse = true;
                 watchedState.form.formNotifications = { notice: success };
                 watchedState.form.processState = 'sent';
-                console.log(watchedState, 'watchedState');
               } else {
                 const error = notifications.errors.networkErrors.notValidRss();
                 watchedState.form.formNotifications = { notice: error };
                 watchedState.form.processState = 'error';
+                setTimeout(() => {
+                  watchedState.form.processState = 'filling';
+                }, 4000);
               }
             })
             .catch((err) => {
@@ -179,6 +115,9 @@ export default (language = 'en') => {
             });
         }
         watchedState.form.processState = 'error';
+        setTimeout(() => {
+          watchedState.form.processState = 'filling';
+        }, 4000);
         return undefined;
       })
       .catch((caughtErr) => {
@@ -186,7 +125,7 @@ export default (language = 'en') => {
           ? notifications.errors.runtimeErrors.internalError()
           : notifications.errors.networkErrors.axiosError();
         console.log(notice);
-        watchedState.form.processError = { notice };
+        watchedState.form.formNotifications = { notice };
         watchedState.form.processState = 'filling';
       });
   });

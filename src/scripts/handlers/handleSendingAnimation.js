@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
-
 import spinner from '../htmlElements/spinner';
-import buildHtml from '../buildHtml';
+import buildHtml from '../utilities/htmlBuilder';
 
 export default (elements, axiosState) => {
   if (!axiosState) {

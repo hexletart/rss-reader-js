@@ -8,24 +8,24 @@
   <body class="d-flex flex-column min-vh-100" data-bs-theme="dark">
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
       <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-custom text-custom-warning">
           <div class="modal-header">
-            <h5 class="modal-title"></h5>
+            <h5 class="modal-title  text-custom-warning"></h5>
             <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body text-break"></div>
           <div class="modal-footer">
-            <a class="btn btn-primary full-article" href="#" role="button" target="_blank" rel="noopener noreferrer"></a>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"></button>
+            <a class="btn-custom btn-padding-modal full-article bg-modal-open text-white btn-shadow" href="#" role="button" target="_blank" rel="noopener noreferrer"></a>
+            <button type="button" class="btn-custom btn-padding-modal bg-modal-close text-white btn-shadow" data-bs-dismiss="modal"></button>
           </div>
         </div>
       </div>
     </div>
     <main class="flex-grow-1 container-fluid">
-      <section id="section-menu" class="mt-custom-1rem p-5 bg-custom shadow-section-main text-custom-main">
+      <section id="section-menu" class="mt-1rem p-5 shadow-dark-blue bg-dark-blue text-custom-warning">
           <div class="row">
             <div class="col-md-10 col-lg-8 mx-auto">
-              <h1 class="font-shadow-h1 agr-header display-3 mb-0 text-custom-main"></h1>
+              <h1 class="h1-textshadow agr-header display-3 mb-0 text-custom-warning"></h1>
               <p class="agr-description lead"></p>
               <form action class="rss-form text-body">
                 <div class="row">
@@ -36,7 +36,7 @@
                     </div>
                   </div>
                   <div class="col-auto">
-                      <button type="submit" aria-label="add" class="rss-submit h-100 btn-main-custome bg-custom shadow-btn-main text-custom-main">
+                      <button type="submit" aria-label="add" class="btn-custom btn-padding-main rss-submit h-100 bg-dark-blue btn-shadow text-custom-warning">
                         <span class="spinner-container"></span>
                         <span class="button-description"></span>
                       </button>
@@ -50,8 +50,8 @@
       </section>
       <section id="section-data" class="container-xxl p-5">
         <div class="row">
-          <div class="col-md-10 col-lg-8 mx-auto order-1 posts text-custom-main"></div>
-          <div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds text-custom-main"></div>
+          <div class="col-md-10 col-lg-8 mx-auto order-1 posts text-custom-warning"></div>
+          <div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds text-custom-warning"></div>
         </div>
       </section>
     </main>
