@@ -14,6 +14,7 @@ export default {
         },
         errors: {
           validation: {
+            empty: 'Must not be empty',
             notOneOf: 'RSS already exists',
             url: 'Link must be a valid URL',
           },

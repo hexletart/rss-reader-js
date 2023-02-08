@@ -107,7 +107,7 @@ export default (language = 'en') => {
                 watchedState.form.processState = 'error';
                 setTimeout(() => {
                   watchedState.form.processState = 'filling';
-                }, 4000);
+                }, 2000);
               }
             })
             .catch((err) => {
@@ -117,7 +117,7 @@ export default (language = 'en') => {
         watchedState.form.processState = 'error';
         setTimeout(() => {
           watchedState.form.processState = 'filling';
-        }, 4000);
+        }, 2000);
         return undefined;
       })
       .catch((caughtErr) => {

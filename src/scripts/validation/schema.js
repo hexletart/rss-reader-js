@@ -6,10 +6,11 @@ export default (disallowedValues, wordHandler) => {
       url: wordHandler.t('aggregator.notifications.errors.validation.url'),
     },
     mixed: {
+      required: wordHandler.t('aggregator.notifications.errors.validation.empty'),
       notOneOf: wordHandler.t('aggregator.notifications.errors.validation.notOneOf'),
     },
   });
   return yup.object().shape({
-    link: yup.string().url().notOneOf(disallowedValues),
+    link: yup.string().required().url().notOneOf(disallowedValues),
   });
 };

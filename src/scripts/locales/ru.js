@@ -14,6 +14,7 @@ export default {
         },
         errors: {
           validation: {
+            empty: 'Не должно быть пустым',
             notOneOf: 'RSS уже существует',
             url: 'Ссылка должна быть валидным URL',
           },
