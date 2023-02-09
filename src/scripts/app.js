@@ -124,7 +124,7 @@ export default (language = 'en') => {
         const notice = (caughtErr.name !== 'AxiosError')
           ? notifications.errors.runtimeErrors.internalError()
           : notifications.errors.networkErrors.axiosError();
-        console.log(notice);
+        console.log(`caughtErr ==> ${caughtErr}`);
         watchedState.form.formNotifications = { notice };
         watchedState.form.processState = 'filling';
       });
