@@ -1,7 +1,5 @@
 install:
 	npm ci
-	git submodule init
-	git submodule update
 
 lint:
 	npx eslint .
