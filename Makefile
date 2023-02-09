@@ -5,6 +5,8 @@ install:
 
 lint:
 	npx eslint .
+	npx stylelint ./src/styles/scss/*.scss
+	npx htmlhint ./index.html
 
 develop:
 	npx webpack serve
