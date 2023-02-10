@@ -12,7 +12,6 @@ const getNewPosts = (posts, state) => {
 };
 
 const updatePosts = (state, notifications) => {
-  console.log(notifications, 'notifications!');
   const { involvedSources } = state.form;
   setTimeout(
     () => {
