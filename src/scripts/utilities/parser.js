@@ -1,6 +1,7 @@
 export default (gotData, source) => {
   const parser = new DOMParser();
   const contents = parser.parseFromString(gotData, 'application/xml');
+  if (!contents.querySelector('rss')) return null;
   const getElTextContent = (el, selectors) => el.querySelector(selectors).textContent;
   const feedTitle = getElTextContent(contents, 'channel title');
   const feedDescription = getElTextContent(contents, 'channel description');

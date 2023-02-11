@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import _ from 'lodash';
 import getAsyncResponse from './axiosGetter';
-import isValidResponse from './responseDataValidator';
 import parseContentsData from './parser';
 import indexSourceData from './sourceDataIndexator';
 
@@ -16,11 +15,7 @@ const updatePosts = (state, notifications) => {
   setTimeout(
     () => {
       const promises = involvedSources.map((source) => getAsyncResponse(source)
-        .then((responseData) => {
-          if (isValidResponse(responseData)) return responseData.contents;
-          throw notifications.errors.networkErrors.axiosError();
-        })
-        .then((responseContents) => parseContentsData(responseContents))
+        .then((responseData) => parseContentsData(responseData.contents, source))
         .then(({ posts }) => getNewPosts(posts, state))
         .then((posts) => {
           if (!_.isEmpty(posts)) {

@@ -13,7 +13,6 @@ import parseContentsData from './utilities/parser';
 import getNotifications from './utilities/notifications';
 import getAsyncResponse from './utilities/axiosGetter';
 import indexSourceData from './utilities/sourceDataIndexator';
-import isValidResponse from './utilities/responseDataValidator';
 import updatePosts from './utilities/postUpdater';
 import elements from './utilities/elements';
 
@@ -89,9 +88,9 @@ export default (language = 'en') => {
           return getAsyncResponse(watchedState.form.field.link)
             .then((responseData) => {
               const { link } = watchedState.form.field;
-              if (isValidResponse(responseData)) {
-                const { contents: gotDataByAxios } = responseData;
-                const parsedResponseData = parseContentsData(gotDataByAxios, link);
+              const { contents: gotDataByAxios } = responseData;
+              const parsedResponseData = parseContentsData(gotDataByAxios, link);
+              if (parsedResponseData) {
                 const { feeds, posts } = parsedResponseData;
                 const [indexedFeeds, indexedPosts] = [feeds, posts].map(indexSourceData);
                 const success = notifications.successes.forms.rssUpload();
