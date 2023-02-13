@@ -1,5 +1,9 @@
 @import "~bootstrap/scss/bootstrap";
 
+:root {
+  --bg-btn-open: #544200;
+  --bg-btn-close: #002e72;
+}
 .bg-dark-blue {
   background: rgb(2 0 36);
   background: radial-gradient(circle, rgb(2 0 36 / 100%) 0%, rgb(2 3 68 / 100%) 82%, rgb(1 7 102 / 100%) 100%);
@@ -8,11 +12,11 @@
 }
 
 .bg-modal-open {
-  background: #544200;
+  background: var(--bg-btn-open);
 }
 
 .bg-modal-close {
-  background: #002e72;
+  background: var(--bg-btn-close);
 }
 
 .shadow-dark-blue {
@@ -34,8 +38,12 @@
   opacity: 0.55;
 }
 
-.mt-1rem {
-  margin-top: 1rem;
+.mt-1em {
+  margin-top: 1em;
+}
+
+.mb-3em {
+  margin-bottom: 3em;
 }
 
 .h1-textshadow {
@@ -91,3 +99,40 @@ a:active {
 }
 
 /* element - property - notation - flags; */
+
+.form-switch-label {
+  cursor: pointer;
+  width: 6em;
+  padding: 0.2rem 1em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.btn-check:checked + .btn-custom, :not(.btn-check) + .btn-custom:active, .btn-custom:first-child:active, .btn-custom.active, .btn-custom.show {
+  background-color: var(--bg-btn-close);
+}
+
+.transition-open {
+  width: 15em;
+  transition: all 0.7s;
+}
+
+.transition-close {
+  transition: all 0.7s;
+}
+
+.top-custom-05em {
+  top: 0.5em;
+}
+
+.right-custom-05em {
+  right: 0.5em;
+}
+
+.test {
+  transform: translateY(-50px);
+}
+
+footer {
+  transition: all 2s;
+}
