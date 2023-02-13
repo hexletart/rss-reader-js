@@ -38,6 +38,11 @@ export default {
         btnRead: 'Read in full',
         btnClose: 'Close',
       },
+      languageButton: {
+        passive: 'Eng',
+        active: 'Choose russian language',
+      },
+      footerText: 'Created by hexletart',
     },
   },
 };

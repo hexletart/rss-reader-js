@@ -38,6 +38,11 @@ export default {
         btnRead: 'Читать полностью',
         btnClose: 'Закрыть',
       },
+      languageButton: {
+        passive: 'Рус',
+        active: 'Выбрать английский язык',
+      },
+      footerText: 'Разработчик hexletart',
     },
   },
 };

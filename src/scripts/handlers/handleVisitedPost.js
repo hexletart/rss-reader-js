@@ -6,6 +6,6 @@ export default (elements, value) => {
   visitedPost.classList.remove('fw-bold');
   visitedPost.classList.add('fw-normal', 'opacity-75');
   modalTitle.textContent = postTitle;
-  modalBody.textContent = postDescription;
+  modalBody.innerHTML = postDescription;
   modalButtonRead.href = postLink;
 };
