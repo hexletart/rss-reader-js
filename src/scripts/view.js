@@ -2,6 +2,7 @@ import handleProcess from './handlers/handleProcess';
 import handleBaseView from './handlers/handleBaseView';
 import handleVisitedPost from './handlers/handleVisitedPost';
 import handleNotification from './handlers/handleNotification';
+import handleButtonLng from './handlers/handleButtonLng';
 import { handleFeeds, handlePosts } from './handlers/handleResponseData';
 
 export default (watchedState, elements, wordHandler, path, value) => {
@@ -17,6 +18,8 @@ export default (watchedState, elements, wordHandler, path, value) => {
     case 'form.response.posts': handlePosts(watchedState, elements, wordHandler, value);
       break;
     case 'form.formNotifications': handleNotification(elements, value);
+      break;
+    case 'form.uiButtonLng': handleButtonLng(elements, value, wordHandler);
       break;
     default:
       break;
