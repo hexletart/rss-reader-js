@@ -17,4 +17,7 @@ export default {
   modalBody: document.querySelector('.modal-body'),
   modalButtonRead: document.querySelector('.modal-footer a'),
   modalButtonClose: document.querySelector('.modal-footer button'),
+  formSwitchLabel: document.querySelector('.form-switch-label'),
+  formSwitchCheckbox: document.getElementById('changeLngButton'),
+  footerText: document.querySelector('.footer-text'),
 };
