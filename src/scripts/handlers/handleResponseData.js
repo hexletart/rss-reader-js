@@ -8,7 +8,7 @@ import buildHtml from '../utilities/htmlBuilder';
 export const handleFeeds = (elements, wordHandler, feeds) => {
   const { feeds: feedContainer, dataSection } = elements;
   if (feedContainer.innerHTML === '') {
-    dataSection.classList.add('mt-1rem', 'shadow-dark-blue');
+    dataSection.classList.add('mt-1em', 'mb-3em', 'p-5', 'shadow-dark-blue');
   }
   const feedHeader = wordHandler.t('aggregator.dataSection.feedBlock.header');
   const feedNodes = feeds.map(getFeedListElement);
