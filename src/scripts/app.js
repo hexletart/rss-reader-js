@@ -34,6 +34,7 @@ export default (language = 'en') => {
         posts: [],
         feeds: [],
       },
+      uiButtonLng: 'passive',
     },
   };
 
@@ -65,6 +66,35 @@ export default (language = 'en') => {
       .then(() => inputEvent.preventDefault())
       .then(() => {
         watchedState.form.processState = 'filling';
+      })
+      .catch((err) => { throw err; });
+  });
+
+  elements.formSwitchLabel.addEventListener('mouseover', (overEvent) => {
+    rendering.then(() => {
+      overEvent.preventDefault();
+      watchedState.form.uiButtonLng = 'active';
+    });
+  });
+
+  elements.formSwitchLabel.addEventListener('mouseout', (outEvent) => {
+    rendering.then(() => {
+      outEvent.preventDefault();
+      watchedState.form.uiButtonLng = 'passive';
+    });
+  });
+
+  elements.formSwitchLabel.addEventListener('click', () => {
+    rendering
+      .then(() => {
+        const [oppositeLanguage] = ['ru', 'en'].filter((lng) => lng !== language);
+        const currentLanguage = (elements.formSwitchCheckbox.checked) ? oppositeLanguage : language;
+        i18nInstance.changeLanguage(currentLanguage)
+          .then(() => {
+            watchedState.lng = currentLanguage;
+            watchedState.form.formNotifications = { notice: {} };
+          })
+          .catch((err) => { throw err; });
       })
       .catch((err) => { throw err; });
   });
