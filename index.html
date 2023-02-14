@@ -22,38 +22,47 @@
       </div>
     </div>
     <main class="flex-grow-1 container-fluid">
-      <section id="section-menu" class="mt-1rem p-5 shadow-dark-blue bg-dark-blue text-custom-warning">
-          <div class="row">
-            <div class="col-md-10 col-lg-8 mx-auto">
-              <h1 class="h1-textshadow agr-header display-3 mb-0 text-custom-warning"></h1>
-              <p class="agr-description lead"></p>
-              <form class="rss-form text-body" novalidate="novalidate">
-                <div class="row">
-                  <div class="col">
-                    <div class="form-floating">
-                      <input name="url" autocomplete="off" id="form-input" aria-label="url" autofocus required class="text-dark form-control w-100" placeholder="rss link">
-                      <label for="form-input"><div class="placeholder placeholder-glow"></div></label>
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                      <button type="submit" aria-label="add" class="btn-custom btn-padding-main rss-submit h-100 bg-dark-blue btn-shadow text-custom-warning">
-                        <span class="spinner-container"></span>
-                        <span class="button-description"></span>
-                      </button>
+      <section id="section-menu" class="mt-1em p-5 shadow-dark-blue bg-dark-blue text-custom-warning position-relative">
+        <div class="form-switch position-absolute top-custom-05em right-custom-05em">
+          <input type="checkbox" class="btn-check form-switch-input" id="changeLngButton"  checked autocomplete="off">
+          <label class="btn-custom btn-shadow bg-modal-open text-white form-switch-label" for="changeLngButton"></label><br>
+        </div>
+        <div class="row">
+          <div class="col-md-10 col-lg-8 mx-auto">
+            <h1 class="h1-textshadow agr-header display-3 mb-0 text-custom-warning"></h1>
+            <p class="agr-description lead"></p>
+            <form class="rss-form text-body" novalidate="novalidate">
+              <div class="row">
+                <div class="col">
+                  <div class="form-floating">
+                    <input name="url" autocomplete="off" id="form-input" aria-label="url" autofocus required class="text-dark form-control w-100" placeholder="rss link">
+                    <label for="form-input"><div class="placeholder placeholder-glow"></div></label>
                   </div>
                 </div>
-              </form>
-              <p class="agr-example mt-2 mb-0"></p>
-              <p class="feedback m-0 position-absolute small"></p>
-            </div>            
-          </div>
+                <div class="col-auto">
+                    <button type="submit" aria-label="add" class="btn-custom btn-padding-main rss-submit h-100 bg-dark-blue btn-shadow text-custom-warning">
+                      <span class="spinner-container"></span>
+                      <span class="button-description"></span>
+                    </button>
+                </div>
+              </div>
+            </form>
+            <p class="agr-example mt-2 mb-0"></p>
+            <p class="feedback m-0 position-absolute small"></p>
+          </div>            
+        </div>
       </section>
-      <section id="section-data" class="container-xxl p-5">
+      <section id="section-data" class="container-xxl">
         <div class="row">
           <div class="col-md-10 col-lg-8 mx-auto order-1 posts text-custom-warning"></div>
           <div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds text-custom-warning"></div>
         </div>
       </section>
     </main>
+    <footer class="container-fluid footer position-fixed bottom-0 mt-1em">
+      <div class="text-custom-warning py-1 d-flex justify-content-center shadow-dark-blue bg-dark-blue">
+        <p class="footer-text m-0"></p>
+      </div>
+    </footer>
   </body>
 </html>
