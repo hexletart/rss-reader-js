@@ -4,6 +4,7 @@
   --bg-btn-open: #544200;
   --bg-btn-close: #002e72;
 }
+
 .bg-dark-blue {
   background: rgb(2 0 36);
   background: radial-gradient(circle, rgb(2 0 36 / 100%) 0%, rgb(2 3 68 / 100%) 82%, rgb(1 7 102 / 100%) 100%);
@@ -108,7 +109,11 @@ a:active {
   overflow: hidden;
 }
 
-.btn-check:checked + .btn-custom, :not(.btn-check) + .btn-custom:active, .btn-custom:first-child:active, .btn-custom.active, .btn-custom.show {
+.btn-check:checked + .btn-custom,
+:not(.btn-check) + .btn-custom:active,
+.btn-custom:first-child:active,
+.btn-custom.active,
+.btn-custom.show {
   background-color: var(--bg-btn-close);
 }
 
