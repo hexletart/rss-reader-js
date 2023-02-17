@@ -1,24 +1,17 @@
-import DataGettingError from '../classes/dataGettingError';
-import RssValidationError from '../classes/rssValidationError';
+import _ from 'lodash';
 
-export default (wordHandler) => ({
-  errors: {
-    networkErrors: {
-      notValidRss: () => new RssValidationError(wordHandler
-        .t('aggregator.notifications.errors.process.notValidRss')),
-      axiosError: () => new DataGettingError(wordHandler
-        .t('aggregator.notifications.errors.process.axiosError')),
-    },
-    runtimeErrors: {
-      internalError: () => new Error(wordHandler
-        .t('aggregator.notifications.errors.process.internalError')),
-    },
-  },
-  successes: {
-    forms: {
-      rssUpload: () => ({
-        message: wordHandler.t('aggregator.notifications.successes.rssUpload'),
-      }),
-    },
-  },
-});
+const wordHandlerMap = [
+  { noticeName: 'axiosError', path: 'aggregator.notifications.errors.process.axiosError', noticeType: 'networkError' },
+  { noticeName: 'internalError', path: 'aggregator.notifications.errors.process.internalError', noticeType: 'error' },
+  { noticeName: 'rssUpload', path: 'aggregator.notifications.successes.rssUpload', noticeType: 'success' },
+  { noticeName: 'url', path: 'aggregator.notifications.errors.validation.url', noticeType: 'validationError' },
+  { noticeName: 'required', path: 'aggregator.notifications.errors.validation.empty', noticeType: 'validationError' },
+  { noticeName: 'notOneOf', path: 'aggregator.notifications.errors.validation.notOneOf', noticeType: 'validationError' },
+  { noticeName: 'notValidRss', path: 'aggregator.notifications.errors.process.notValidRss', noticeType: 'validationError' },
+];
+
+export default (wordHandler) => (property) => () => {
+  const propertySource = _.find(wordHandlerMap, property);
+  const { noticeType, path } = propertySource;
+  return { noticeType, text: wordHandler.t(path) };
+};
