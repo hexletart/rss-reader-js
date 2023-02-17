@@ -10,7 +10,7 @@ const getNewPosts = (posts, state) => {
     .some(({ postTitle }) => responsePostTitle === postTitle));
 };
 
-const updatePosts = (state, notifications) => {
+const updatePosts = (state, noticeGetter) => {
   const { involvedSources } = state.form;
   setTimeout(
     () => {
@@ -25,9 +25,11 @@ const updatePosts = (state, notifications) => {
         .catch((err) => { throw err; }));
       Promise.all(promises)
         .catch(() => {
-          console.log(notifications.errors.networkErrors.axiosError());
+          const { text } = noticeGetter({ noticeName: 'axiosError' })();
+          const error = new Error(text);
+          console.log(error);
         });
-      return updatePosts(state, notifications);
+      return updatePosts(state, noticeGetter);
     },
     5000,
   );
