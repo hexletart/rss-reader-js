@@ -1,23 +1,22 @@
 /* eslint-disable func-names */
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
 
 // import * as bootstrap from 'bootstrap';
 import onChange from 'on-change';
 import _ from 'lodash';
 import i18next from 'i18next';
+import { AxiosError } from 'axios';
 import initView from './view';
 import resources from './locales/index';
 import validate from './validation/validate';
 import parseContentsData from './utilities/parser';
-import getNotifications from './utilities/notifications';
+import formNotice from './utilities/notifications';
 import getAsyncResponse from './utilities/axiosGetter';
 import indexSourceData from './utilities/sourceDataIndexator';
 import updatePosts from './utilities/postUpdater';
 import elements from './utilities/elements';
 
 export default (language = 'en') => {
-  let notifications;
   const state = {
     lng: '',
     form: {
@@ -46,10 +45,12 @@ export default (language = 'en') => {
       resources,
     });
 
+  const noticeGetter = formNotice(i18nInstance);
+
   const watchedState = onChange(state, function (path, value) {
     switch (path) {
       case 'form.uiState.gotFirstResponse':
-        updatePosts(this, notifications);
+        updatePosts(this, noticeGetter);
         break;
       default: initView(this, elements, i18nInstance, path, value);
         break;
@@ -58,7 +59,6 @@ export default (language = 'en') => {
 
   const rendering = gettingInstance
     .then(() => { watchedState.lng = language; })
-    .then(() => { notifications = getNotifications(i18nInstance); })
     .catch((err) => { throw err; });
 
   elements.input.addEventListener('input', (inputEvent) => {
@@ -92,7 +92,6 @@ export default (language = 'en') => {
         i18nInstance.changeLanguage(currentLanguage)
           .then(() => {
             watchedState.lng = currentLanguage;
-            watchedState.form.formNotifications = { notice: {} };
           })
           .catch((err) => { throw err; });
       })
@@ -106,15 +105,13 @@ export default (language = 'en') => {
         const { value } = submitEvent.target.elements.url;
         watchedState.form.processState = 'sending';
         watchedState.form.field.link = value.trim();
-        return validate(
-          watchedState.form.field,
-          watchedState.form.involvedSources,
-          i18nInstance,
-        );
+        return validate(watchedState.form.field, watchedState.form.involvedSources);
       })
-      .then((notice) => {
-        watchedState.form.formNotifications = { notice };
-        if (_.isEmpty(watchedState.form.formNotifications.notice)) {
+      .then((error) => {
+        const notice = ((error.message) ? noticeGetter({ noticeName: error.message }) : {});
+        watchedState.form.formNotifications = notice;
+        // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!', watchedState.form.formNotifications());
+        if (_.isEqual(watchedState.form.formNotifications, {})) {
           return getAsyncResponse(watchedState.form.field.link)
             .then((responseData) => {
               const { link } = watchedState.form.field;
@@ -123,16 +120,14 @@ export default (language = 'en') => {
               if (parsedResponseData) {
                 const { feeds, posts } = parsedResponseData;
                 const [indexedFeeds, indexedPosts] = [feeds, posts].map(indexSourceData);
-                const success = notifications.successes.forms.rssUpload();
                 watchedState.form.response.feeds.unshift(...indexedFeeds);
                 watchedState.form.response.posts.unshift(...indexedPosts);
                 watchedState.form.involvedSources.push(link);
                 watchedState.form.uiState.gotFirstResponse = true;
-                watchedState.form.formNotifications = { notice: success };
+                watchedState.form.formNotifications = noticeGetter({ noticeName: 'rssUpload' });
                 watchedState.form.processState = 'sent';
               } else {
-                const error = notifications.errors.networkErrors.notValidRss();
-                watchedState.form.formNotifications = { notice: error };
+                watchedState.form.formNotifications = noticeGetter({ noticeName: 'notValidRss' });
                 watchedState.form.processState = 'error';
                 setTimeout(() => {
                   watchedState.form.processState = 'filling';
@@ -150,11 +145,11 @@ export default (language = 'en') => {
         return undefined;
       })
       .catch((caughtErr) => {
-        const notice = (caughtErr.name !== 'AxiosError')
-          ? notifications.errors.runtimeErrors.internalError()
-          : notifications.errors.networkErrors.axiosError();
-        console.log(`caughtErr ==> ${caughtErr}`);
-        watchedState.form.formNotifications = { notice };
+        const notice = (caughtErr instanceof AxiosError)
+          ? noticeGetter({ noticeName: 'internalError' })
+          : noticeGetter({ noticeName: 'axiosError' });
+        console.log(caughtErr);
+        watchedState.form.formNotifications = notice;
         watchedState.form.processState = 'filling';
       });
   });
