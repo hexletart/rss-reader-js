@@ -7,7 +7,7 @@ export default {
         label: 'RSS link',
         submit: 'Add',
       },
-      hint: 'Example: https://ru.hexlet.io/lessons.rss',
+      hint: 'Example: https://www.formula1.com/content/fom-website/en/latest/all.xml',
       notifications: {
         successes: {
           rssUpload: 'RSS uploaded successfully',
@@ -35,6 +35,7 @@ export default {
         },
       },
       modalComponent: {
+        modalBodyContent: 'Content preview is limited due to invalid format. To view it, please go to the page of the resource.',
         btnRead: 'Read in full',
         btnClose: 'Close',
       },

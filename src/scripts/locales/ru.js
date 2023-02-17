@@ -7,7 +7,7 @@ export default {
         label: 'Ссылка RSS',
         submit: 'Добавить',
       },
-      hint: 'Пример: https://ru.hexlet.io/lessons.rss',
+      hint: 'Пример: https://www.formula1.com/content/fom-website/en/latest/all.xml',
       notifications: {
         successes: {
           rssUpload: 'RSS успешно загружен',
@@ -35,6 +35,7 @@ export default {
         },
       },
       modalComponent: {
+        modalBodyContent: 'Предосмотр контента ограничен ввиду недопустимости формата. Подробно ознакомиться с содержимым можно на странце источника.',
         btnRead: 'Читать полностью',
         btnClose: 'Закрыть',
       },
