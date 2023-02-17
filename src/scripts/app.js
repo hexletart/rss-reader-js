@@ -110,7 +110,6 @@ export default (language = 'en') => {
       .then((error) => {
         const notice = ((error.message) ? noticeGetter({ noticeName: error.message }) : {});
         watchedState.form.formNotifications = notice;
-        // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!', watchedState.form.formNotifications());
         if (_.isEqual(watchedState.form.formNotifications, {})) {
           return getAsyncResponse(watchedState.form.field.link)
             .then((responseData) => {
