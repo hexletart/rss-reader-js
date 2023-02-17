@@ -82,6 +82,10 @@
   color: #c9a92b;
 }
 
+.text-custom-warning-pale {
+  color: #625934;
+}
+
 a:active {
   color: --bs-secondary;
 }
@@ -140,4 +144,8 @@ a:active {
 
 footer {
   transition: all 2s;
+}
+
+.modal-body * {
+  overflow: hidden;
 }
