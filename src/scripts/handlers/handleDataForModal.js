@@ -10,7 +10,6 @@ export default (elements, value, wordHandler) => {
   modalBody.classList.remove(...stylesForInvalid);
   const { children } = parsedDescription.body;
   if (children.length > 0) modalBody.classList.add(...stylesForInvalid);
-
   if (children.length === 0) {
     modalBody.textContent = postDescription;
   } else {
