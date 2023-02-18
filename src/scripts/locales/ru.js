@@ -2,7 +2,7 @@ export default {
   translation: {
     aggregator: {
       header: 'RSS агрегатор',
-      description: 'Начните читать RSS сегодня! Это легко, это красиво.',
+      description: 'Рад приветствовать Вас на моём ресурсе! Попробуйте читать RSS сегодня! Это довольно просто и удобно.',
       form: {
         label: 'Ссылка RSS',
         submit: 'Добавить',
