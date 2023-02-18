@@ -12,11 +12,11 @@
   background: radial-gradient(circle, rgb(2 0 36 / 100%) 0%, rgb(2 3 68 / 100%) 82%, rgb(1 7 102 / 100%) 100%);
 }
 
-.bg-modal-open {
+.bg-custom-open {
   background: var(--bg-btn-open);
 }
 
-.bg-modal-close {
+.bg-custom-close {
   background: var(--bg-btn-close);
 }
 
@@ -73,6 +73,10 @@
   padding: 0.375rem 0.75rem;
 }
 
+.btn-padding-form-switch-label {
+  padding: 1em 1em 0.2em;
+}
+
 .spinner-container {
   display: inline-block;
   width: 1.5rem;
@@ -103,43 +107,25 @@ a:active {
   outline: 0;
 }
 
-/* element - property - notation - flags; */
-
 .form-switch-label {
+  background: transparent;
+  transition: all 0.7s;
   cursor: pointer;
   width: 6em;
-  padding: 0.2rem 1em;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.btn-check:checked + .btn-custom,
-:not(.btn-check) + .btn-custom:active,
-.btn-custom:first-child:active,
-.btn-custom.active,
-.btn-custom.show {
-  background-color: var(--bg-btn-close);
-}
-
-.transition-open {
+.transformation-open {
   width: 15em;
-  transition: all 0.7s;
 }
 
-.transition-close {
-  transition: all 0.7s;
+.buttom-custom-minus-1-9em {
+  bottom: -1.9em;
 }
 
-.top-custom-05em {
-  top: 0.5em;
-}
-
-.right-custom-05em {
-  right: 0.5em;
-}
-
-.test {
-  transform: translateY(-50px);
+.right-custom-1em {
+  right: 1em;
 }
 
 footer {
@@ -148,4 +134,16 @@ footer {
 
 .modal-body * {
   overflow: hidden;
+}
+
+.zindex-minus-100 {
+  z-index: -100;
+}
+
+.zindex-minus-200 {
+  z-index: -200;
+}
+
+.zindex-0 {
+  z-index: 0;
 }
