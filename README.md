@@ -17,4 +17,5 @@ Welcome to my page!
 
 
 I would like to present to you the project written by me in pure JavaScript. The project uses asynchronous code built on promises, bypassing the concept of async/await. I tried to make it as user-friendly as possible and functional at the same time. For its design, I used the knowledge of layout and a little imagination. Hope you enjoy using it!
+
 Thank you )
