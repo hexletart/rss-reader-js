@@ -145,9 +145,10 @@ export default (language = 'en') => {
       })
       .catch((caughtErr) => {
         const notice = (caughtErr instanceof AxiosError)
-          ? noticeGetter({ noticeName: 'internalError' })
-          : noticeGetter({ noticeName: 'axiosError' });
-        console.log(caughtErr);
+          ? noticeGetter({ noticeName: 'axiosError' })
+          : noticeGetter({ noticeName: 'internalError' });
+        // console.log(notice, 'notice');
+        // console.log(caughtErr);
         watchedState.form.formNotifications = notice;
         watchedState.form.processState = 'filling';
       });
