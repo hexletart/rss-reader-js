@@ -1,4 +1,4 @@
-RSS aggregator
+RSS Reader
 =======
 
 ### Hexlet tests and linter status:

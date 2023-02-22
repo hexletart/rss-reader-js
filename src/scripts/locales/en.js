@@ -1,7 +1,7 @@
 export default {
   translation: {
     aggregator: {
-      header: 'RSS aggregator',
+      header: 'RSS Reader',
       description: "I am glad to welcome you on my resource! Try reading RSS today! It's pretty simple and convenient.",
       form: {
         label: 'RSS link',
